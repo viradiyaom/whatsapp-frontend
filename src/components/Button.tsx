@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { TouchableOpacity, TouchableOpacityProps } from 'react-native';
 
 const Button = ({ className, ...rest }: TouchableOpacityProps) => {
@@ -10,4 +10,4 @@ const Button = ({ className, ...rest }: TouchableOpacityProps) => {
   );
 };
 
-export default Button;
+export default memo(Button);

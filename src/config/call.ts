@@ -11,7 +11,12 @@ const chats: ChatType = {
   chatListByRoomId: id => api.get('/rooms/' + id),
   fetchAllUsers: () => api.get('/rooms/allUsers'),
   initiate: data => api.post('/rooms/initiate', data),
-  sendMessage: (id, data) => api.post(`/rooms/${id}/message`, data),
+  sendMessage: (id, data, type) =>
+    api.post(`/rooms/${id}/message?type=${type}`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }),
 };
 
 export { auth, chats };

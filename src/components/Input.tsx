@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { TextInput, TextInputProps } from 'react-native';
 
 const Input = ({ className, ...rest }: TextInputProps) => {
@@ -10,4 +10,4 @@ const Input = ({ className, ...rest }: TextInputProps) => {
   );
 };
 
-export default Input;
+export default memo(Input);

@@ -1,10 +1,15 @@
-import React from 'react';
+import Layout from 'components/Layout';
+import React, { memo } from 'react';
 import { Text } from 'react-native';
 
 type Props = {};
 
 const Updates = (props: Props) => {
-  return <Text>Updates</Text>;
+  return (
+    <Layout>
+      <Text>Updates</Text>
+    </Layout>
+  );
 };
 
-export default Updates;
+export default memo(Updates);

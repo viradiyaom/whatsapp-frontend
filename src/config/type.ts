@@ -4,7 +4,6 @@ import {
   InitiateChatParams,
   LoginParams,
   LoginResponse,
-  MessageParams,
   RegisterParams,
 } from 'utils/types';
 
@@ -19,6 +18,6 @@ export type ChatType = {
   recent: () => AxiosPromise;
   fetchAllUsers: () => AxiosPromise;
   initiate: (data: InitiateChatParams) => AxiosPromise;
-  sendMessage: (id: string, data: MessageParams) => AxiosPromise;
+  sendMessage: (id: string, data: FormData, type?: string) => AxiosPromise;
   chatListByRoomId: (id: string) => AxiosPromise;
 };

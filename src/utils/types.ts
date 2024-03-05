@@ -37,6 +37,7 @@ export interface RecentChatItem {
   _id: string;
   chatRoomId: string;
   message: string;
+  type: string;
   postedByUser: string;
   createdAt: string;
   user: {
@@ -61,7 +62,8 @@ export interface InitiateChatParams {
 }
 
 export interface MessageParams {
-  messageText: string;
+  type: 'TEXT' | 'IMAGE' | 'VIDEO';
+  content: string;
 }
 
 export interface ChatItemType {

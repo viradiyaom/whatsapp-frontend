@@ -3,14 +3,24 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Layout from 'components/Layout';
 import { SocketContext } from 'providers/socket';
-import React, { useContext, useEffect } from 'react';
-import { AppState, AppStateStatus, TouchableOpacity } from 'react-native';
+import React, { memo, useContext, useEffect } from 'react';
+import {
+  AppState,
+  AppStateStatus,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Feather from 'react-native-vector-icons/Feather';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { RootStackParamList } from 'utils/types';
 import Calls from './tabs/Calls';
 import Chats from './tabs/Chats';
 import Updates from './tabs/Updates';
+import Header from 'components/Header';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Listing'>;
 
@@ -48,6 +58,15 @@ const Listing = ({ navigation }: Props) => {
 
   return (
     <Layout>
+      <StatusBar backgroundColor="#1f2c34" />
+      <Header className="justify-between px-5">
+        <Text className="font-bold text-[18px] text-white">WhatsApp</Text>
+        <View className="flex flex-row gap-x-4">
+          <Feather name="camera" size={22} color="#fff" />
+          <Ionicons name="search-sharp" size={22} color="#fff" />
+          <Feather name="more-vertical" size={22} color="#fff" />
+        </View>
+      </Header>
       <Tab.Navigator
         screenOptions={{
           tabBarLabelStyle: {
@@ -65,8 +84,8 @@ const Listing = ({ navigation }: Props) => {
         <Tab.Screen name="Calls" component={Calls} />
       </Tab.Navigator>
       <TouchableOpacity
-        className="absolute bottom-0 p-4 right-[20px] bg-[#01a984] rounded-2xl"
-        style={{ marginBottom: inset.bottom + 5 }}
+        className="absolute bottom-0 p-3.5 flex justify-center items-center right-[20px] bg-[#01a984] rounded-2xl"
+        style={{ marginBottom: inset.bottom + 15 }}
         onPress={() => navigation.navigate('NewChat')}>
         <MaterialIcons name="chat" size={26} color="#121b22" />
       </TouchableOpacity>
@@ -74,4 +93,4 @@ const Listing = ({ navigation }: Props) => {
   );
 };
 
-export default Listing;
+export default memo(Listing);

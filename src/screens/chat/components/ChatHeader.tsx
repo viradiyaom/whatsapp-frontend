@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React from 'react';
+import Header from 'components/Header';
+import React, { memo } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -18,13 +19,13 @@ const ChatHeader = ({
   navigation,
   subHeaderText,
 }: Props) => (
-  <View className="flex flex-row items-center px-2 py-2">
+  <Header>
     <TouchableOpacity onPress={() => navigation.pop()}>
       <Ionicons name="chevron-back" size={22} color="#fff" />
     </TouchableOpacity>
     <Image
       className="ml-1 mr-3 rounded-full w-11 h-11"
-      source={{ uri: ENV.IMAGE_URL + '/profilePhoto/' + id + '.png' }}
+      source={{ uri: ENV.IMAGE_URL + '/images/profilePhoto/' + id + '.png' }}
     />
     <View>
       <Text className="font-bold text-white text-[18px]">{name}</Text>
@@ -36,7 +37,7 @@ const ChatHeader = ({
       <FontAwesome name="phone" size={22} color="#fff" />
       <Feather name="more-vertical" size={22} color="#fff" />
     </View>
-  </View>
+  </Header>
 );
 
-export default ChatHeader;
+export default memo(ChatHeader);

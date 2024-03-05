@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import { TextInput, TouchableOpacity, View } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
@@ -6,10 +6,15 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-const ChatInput = ({ containerStyle, onValueChange, ...props }: any) => {
+const ChatInput = ({
+  containerStyle,
+  onValueChange,
+  action,
+  ...props
+}: any) => {
   const [message, setMessage] = useState('');
   return (
-    <View className="flex flex-row w-full gap-1.5 px-3">
+    <View className="flex flex-row  w-full gap-1.5 px-3">
       <View className="flex-1 bg-[#1f2c34] rounded-full flex flex-row px-1.5 gap-x-1 items-center">
         <FontAwesome5 name="smile" size={25} color="#85939e" />
 
@@ -28,7 +33,9 @@ const ChatInput = ({ containerStyle, onValueChange, ...props }: any) => {
           />
         </View>
         <View className="flex flex-row items-center gap-2 mr-2">
-          <Ionicons name="attach-sharp" size={25} color="#85939e" />
+          <TouchableOpacity onPress={() => action('upload')}>
+            <Ionicons name="attach-sharp" size={25} color="#85939e" />
+          </TouchableOpacity>
           {!message && (
             <View className="bg-[#85939e] rounded-full p-0.5 mr-1.5">
               <MaterialCommunityIcons
@@ -38,7 +45,11 @@ const ChatInput = ({ containerStyle, onValueChange, ...props }: any) => {
               />
             </View>
           )}
-          {!message && <FontAwesome name="camera" size={20} color="#85939e" />}
+          {!message && (
+            <TouchableOpacity onPress={() => {}}>
+              <FontAwesome name="camera" size={20} color="#85939e" />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
       <TouchableOpacity
@@ -57,4 +68,4 @@ const ChatInput = ({ containerStyle, onValueChange, ...props }: any) => {
   );
 };
 
-export default ChatInput;
+export default memo(ChatInput);
