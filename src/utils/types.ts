@@ -48,6 +48,14 @@ export interface RecentChatItem {
   };
 }
 
+export type OnVideoCall =
+  | undefined
+  | {
+      chatRoomId: string;
+      type: string;
+      usersDetails: UserDetails;
+    };
+
 export interface UserDetails {
   createdAt: string;
   email: string;
@@ -59,6 +67,10 @@ export interface UserDetails {
 
 export interface InitiateChatParams {
   userIds: string[];
+}
+export interface CallUserParams {
+  type: string;
+  chatRoomId: string;
 }
 
 export interface MessageParams {

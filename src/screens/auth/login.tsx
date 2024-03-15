@@ -26,7 +26,7 @@ const LoginScreen = ({ navigation }: Props) => {
   const handleSubmit = () => {
     if (loginParams.email && loginParams.password) {
       auth
-        .loginUser(loginParams)
+        .login(loginParams)
         .then(async ({ data }) => {
           if (data.data) {
             await AsyncStorage.setItem(

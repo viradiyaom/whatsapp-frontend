@@ -11,7 +11,7 @@ const SplashScreen = ({ navigation }: Props) => {
   useEffect(() => {
     setTimeout(async () => {
       const userDetails = await AsyncStorage.getItem('userDetails');
-      navigation.replace(userDetails ? 'Login' : 'Login');
+      navigation.replace(userDetails ? 'Listing' : 'Login');
     }, 2000);
   }, [navigation]);
 

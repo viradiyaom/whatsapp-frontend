@@ -9,9 +9,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { ENV } from 'utils';
 import { RootStackParamList } from 'utils/types';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Chat'> & {
-  contacts: number;
-};
+type Props = NativeStackScreenProps<RootStackParamList, 'NewChat'>;
 
 const NewChat = ({ navigation }: Props) => {
   const [contacts, setContacts] = useState([]);

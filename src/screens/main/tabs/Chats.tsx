@@ -10,18 +10,21 @@ import { ENV } from 'utils';
 import { RecentChatItem, RootStackParamList } from 'utils/types';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Chats'>;
-type CHatItemType = RecentChatItem & { navigation: any };
+
+type CHatItemType = RecentChatItem & {
+  onPress: (id: string, name: string) => void;
+};
 
 const ChatItem = ({
-  navigation,
-  message,
   type,
+  onPress,
+  message,
   createdAt,
   user: { name, id },
 }: CHatItemType) => (
   <TouchableOpacity
     className="flex flex-row items-center p-2.5 border-b border-gray-200/5 gap-x-2.5"
-    onPress={() => navigation.navigate('Chat', { id, name })}>
+    onPress={() => onPress(id, name)}>
     <Image
       className="w-12 h-12 rounded-full"
       source={{
@@ -75,7 +78,10 @@ const Chats = ({ navigation }: Props) => {
       <FlatList
         data={listing}
         renderItem={({ item }) => (
-          <ChatItem navigation={navigation} {...item} />
+          <ChatItem
+            {...item}
+            onPress={(id, name) => navigation.navigate('Chat', { id, name })}
+          />
         )}
       />
     </Layout>

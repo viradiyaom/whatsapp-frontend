@@ -10,12 +10,14 @@ import { RootStackParamList } from 'utils/types';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Chat'> & {
   subHeaderText: string;
+  action: (v: string) => void;
 };
 
 const ChatHeader = ({
   route: {
     params: { name, id },
   },
+  action,
   navigation,
   subHeaderText,
 }: Props) => (
@@ -33,7 +35,9 @@ const ChatHeader = ({
     </View>
     <View className="flex-1" />
     <View className="flex flex-row gap-x-5">
-      <FontAwesome name="video-camera" size={22} color="#fff" />
+      <TouchableOpacity onPress={() => action('VIDEO_CALL')}>
+        <FontAwesome name="video-camera" size={22} color="#fff" />
+      </TouchableOpacity>
       <FontAwesome name="phone" size={22} color="#fff" />
       <Feather name="more-vertical" size={22} color="#fff" />
     </View>

@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import Header from 'components/Header';
 import Layout from 'components/Layout';
 import { SocketContext } from 'providers/socket';
 import React, { memo, useContext, useEffect } from 'react';
@@ -20,7 +21,6 @@ import { RootStackParamList } from 'utils/types';
 import Calls from './tabs/Calls';
 import Chats from './tabs/Chats';
 import Updates from './tabs/Updates';
-import Header from 'components/Header';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Listing'>;
 
@@ -42,14 +42,11 @@ const Listing = ({ navigation }: Props) => {
     }
   };
 
-  const initiateUser = () => emitSocketEvent('identity');
-  const deActivateUser = () => emitSocketEvent('disconnect');
-
   useEffect(() => {
-    initiateUser();
+    emitSocketEvent('identity');
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (nextAppState === 'background') {
-        deActivateUser();
+        emitSocketEvent('disconnect');
       }
     };
 
