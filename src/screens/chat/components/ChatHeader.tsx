@@ -8,29 +8,25 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { ENV } from 'utils';
 import { RootStackParamList } from 'utils/types';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Chat'> & {
+type Props = {
+  config?: { name: string; id: string };
   subHeaderText: string;
   action: (v: string) => void;
 };
 
-const ChatHeader = ({
-  route: {
-    params: { name, id },
-  },
-  action,
-  navigation,
-  subHeaderText,
-}: Props) => (
+const ChatHeader = ({ config, action, subHeaderText }: Props) => (
   <Header>
-    <TouchableOpacity onPress={() => navigation.pop()}>
+    <TouchableOpacity onPress={() => action('BACK')}>
       <Ionicons name="chevron-back" size={22} color="#fff" />
     </TouchableOpacity>
     <Image
       className="ml-1 mr-3 rounded-full w-11 h-11"
-      source={{ uri: ENV.IMAGE_URL + '/images/profilePhoto/' + id + '.png' }}
+      source={{
+        uri: ENV.IMAGE_URL + '/images/profilePhoto/' + config?.id + '.png',
+      }}
     />
     <View>
-      <Text className="font-bold text-white text-[18px]">{name}</Text>
+      <Text className="font-bold text-white text-[18px]">{config?.name}</Text>
       <Text className="text-white text-[12px]">{subHeaderText}</Text>
     </View>
     <View className="flex-1" />

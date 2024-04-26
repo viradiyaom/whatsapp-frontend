@@ -1,12 +1,14 @@
 export type RootStackParamList = {
   Splash: undefined;
   Login: undefined;
+  UserList: undefined;
   Listing: undefined;
   Chats: undefined;
   Updates: undefined;
   Call: undefined;
   NewChat: undefined;
-  Chat: { id: string; name: string };
+  VideoCall: VideoCallParams;
+  Chat: undefined | { id: string; name: string };
 };
 
 export type LoginParams = {
@@ -48,12 +50,14 @@ export interface RecentChatItem {
   };
 }
 
-export type OnVideoCall =
+export type VideoCallParams =
   | undefined
   | {
       chatRoomId: string;
-      type: string;
-      usersDetails: UserDetails;
+      type: 'SEND' | 'RECEIVE';
+      name: string;
+      rtcMessage?: any;
+      id: string;
     };
 
 export interface UserDetails {

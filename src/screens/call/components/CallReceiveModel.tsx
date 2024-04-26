@@ -8,19 +8,20 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { MediaStream, RTCView, mediaDevices } from 'react-native-webrtc';
 import { ENV } from 'utils';
-import { OnVideoCall } from 'utils/types';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { VideoCallParams } from 'utils/types';
 
 type Props = {
-  open: OnVideoCall;
-  setOpen: (v: React.SetStateAction<OnVideoCall>) => void;
+  onAnswer: (v: VideoCallParams) => void;
+  open: VideoCallParams;
+  setOpen: (v: React.SetStateAction<VideoCallParams>) => void;
 };
 
-const VideCall = ({ open, setOpen }: Props) => {
+const CallReceiveModel = ({ open, setOpen, onAnswer }: Props) => {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const rtcViewRef = useRef(null);
   const { top, bottom } = useSafeAreaInsets();
@@ -28,7 +29,7 @@ const VideCall = ({ open, setOpen }: Props) => {
   useEffect(() => {
     const openCamera = async () => {
       try {
-        const constraints = { video: true, audio: false }; // You can enable audio as well if needed
+        const constraints = { video: true, audio: false };
         const newStream = await mediaDevices.getUserMedia(constraints);
         setStream(newStream);
       } catch (error) {
@@ -46,22 +47,27 @@ const VideCall = ({ open, setOpen }: Props) => {
       }
     };
   }, []);
+
   const toggleModal = () => {
     setOpen(undefined);
+    stream?.getTracks().forEach(track => {
+      track.stop();
+    });
   };
+
   return (
     <Modal animationType="fade" visible={!!open} onRequestClose={toggleModal}>
       <View className="flex bg-gray-200 h-screen relative justify-center items-center">
         {stream ? (
           <RTCView
             streamURL={stream.toURL()}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover' } as any}
             ref={rtcViewRef}
           />
         ) : (
           <Text className="text-white">Opening camera...</Text>
         )}
-        {open?.usersDetails && (
+        {open && (
           <View
             className="h-full absolute flex-col justify-between  top-0 z-10"
             style={{
@@ -73,14 +79,11 @@ const VideCall = ({ open, setOpen }: Props) => {
                 className="mx-auto rounded-full w-28 h-28"
                 source={{
                   uri:
-                    ENV.IMAGE_URL +
-                    '/images/profilePhoto/' +
-                    open.usersDetails.id +
-                    '.png',
+                    ENV.IMAGE_URL + '/images/profilePhoto/' + open.id + '.png',
                 }}
               />
               <Text className="text-white text-[31px] text-center mt-2">
-                {open.usersDetails.name}
+                {open.name}
               </Text>
               <Text className="text-white text-center mt-1 text-[18px]">
                 WhatsApp video call
@@ -96,13 +99,10 @@ const VideCall = ({ open, setOpen }: Props) => {
                 <Text className="mt-2 text-gray-400 text-[14px]">Decline</Text>
               </View>
               <View className="items-center">
-                <TouchableOpacity className="bg-[#47b9f5] p-5 rounded-full">
-                  <FontAwesome
-                    name="video-camera"
-                    size={26}
-                    color="#fff"
-                    className="rotate"
-                  />
+                <TouchableOpacity
+                  className="bg-[#47b9f5] p-5 rounded-full"
+                  onPress={() => onAnswer(open)}>
+                  <FontAwesome name="video-camera" size={26} color="#fff" />
                 </TouchableOpacity>
                 <Text className="mt-2 text-gray-400 text-[14px]">
                   Swipe up to accept
@@ -114,7 +114,6 @@ const VideCall = ({ open, setOpen }: Props) => {
                     name="android-messages"
                     size={25}
                     color="#fff"
-                    className="rotate"
                   />
                 </TouchableOpacity>
                 <Text className="mt-2 text-gray-400 text-[14px]">Message</Text>
@@ -127,4 +126,4 @@ const VideCall = ({ open, setOpen }: Props) => {
   );
 };
 
-export default VideCall;
+export default CallReceiveModel;

@@ -6,17 +6,16 @@ import { SocketContext } from 'providers/socket';
 import React, { memo, useContext, useEffect, useState } from 'react';
 import { ImageBackground, StatusBar } from 'react-native';
 import { GiftedChat, IMessage } from 'react-native-gifted-chat';
-import { ChatItemType, OnVideoCall, RootStackParamList } from 'utils/types';
+import { ChatItemType, VideoCallParams, RootStackParamList } from 'utils/types';
 import ChatHeader from './components/ChatHeader';
 import ChatInput from './components/ChatInput';
 import ChatMessage from './components/ChatMessage';
 import UploadModel from './components/UploadModel';
 import useWebRTC from 'hooks/useWebRTC';
-import VideCall from './VideCall';
+import VideCall from '../call/VideCall';
+import CallReceiveModel from 'screens/call/components/CallReceiveModel';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Chat'> & {
-  subHeaderText: string;
-};
+type Props = NativeStackScreenProps<RootStackParamList, 'Chat'>;
 
 type MessageType = IMessage & { message: string };
 
@@ -24,14 +23,14 @@ const initialUser = { _id: '', name: '' };
 
 const Chat = ({ route, navigation }: Props) => {
   const user = route.params;
-  // const { remoteRTCMessage, peerConnection } = useWebRTC();
   const [roomId, setRoomId] = useState('');
   const socket = useContext(SocketContext);
   const [uploadModel, setUploadModel] = useState(false);
   const [subHeaderText, setSubHeaderText] = useState('');
   const [currentUser, setCurrentUser] = useState(initialUser);
   const [messages, setMessages] = useState<MessageType[]>([]);
-  // const [videCallModel, setVideCallModel] = useState<OnVideoCall>(undefined);
+  const [videCallModel, setVideCallModel] =
+    useState<VideoCallParams>(undefined);
 
   useEffect(() => {
     const unsubscribe = () => {
@@ -55,16 +54,11 @@ const Chat = ({ route, navigation }: Props) => {
       };
       setMessages(e => [newMsg, ...e]);
     });
+
     socket.on('typingStatus', setSubHeaderText);
 
-    // socket.on('newCall', (data: any) => {
-    //   setVideCallModel(data);
-    //   remoteRTCMessage.current = data.rtcMessage;
-    //   // otherUserId.current = data.callerId;
-    //   // setType('INCOMING_CALL');
-    // });
-
     return () => {
+      socket.off('newCall');
       socket.off('newMessage');
       socket.off('typingStatus');
     };
@@ -91,6 +85,7 @@ const Chat = ({ route, navigation }: Props) => {
 
   const initiateChatRoom = async () => {
     try {
+      if (!user) return;
       const userDetails = await AsyncStorage.getItem('userDetails');
       const data = JSON.parse(userDetails || '{}').data || '';
       if (data.id) {
@@ -107,6 +102,11 @@ const Chat = ({ route, navigation }: Props) => {
           );
           setMessages(chatListData.data);
         }
+        socket.on('newCall', res => {
+          if (data.id !== res.id) {
+            setVideCallModel(res);
+          }
+        });
       }
     } catch (error) {
       console.log('Error initiating chat:', error);
@@ -124,23 +124,36 @@ const Chat = ({ route, navigation }: Props) => {
   };
 
   const onHeaderAction = async (action: string) => {
-    if (action === 'VIDEO_CALL') {
-      // const sessionDescription = await peerConnection.current.createOffer();
-      // await peerConnection.current.setLocalDescription(sessionDescription);
-      // socket.emit('call', {
-      //   type: 'VIDEO_CALL',
-      //   chatRoomId: roomId,
-      //   callerId: currentUser._id,
-      //   rtcMessage: sessionDescription,
-      // });
+    if (action === 'BACK') {
+      navigation.pop();
     }
+    if (action === 'VIDEO_CALL') {
+      if (!route.params || !roomId) return;
+      navigation.navigate('VideoCall', {
+        ...route.params,
+        chatRoomId: roomId,
+        type: 'SEND',
+      });
+    }
+  };
+
+  const answerCall = (data: VideoCallParams) => {
+    if (!route.params || !roomId) return;
+    navigation.navigate('VideoCall', {
+      ...data,
+      ...route.params,
+      chatRoomId: roomId,
+      type: 'RECEIVE',
+    });
   };
 
   return (
     <Layout className="flex flex-col">
       <StatusBar />
       <ChatHeader
-        {...{ route, navigation, subHeaderText, action: onHeaderAction }}
+        config={route.params}
+        action={onHeaderAction}
+        subHeaderText={subHeaderText}
       />
       <ImageBackground
         className="relative flex-1 pb-4"
@@ -165,9 +178,13 @@ const Chat = ({ route, navigation }: Props) => {
           setOpen={setUploadModel}
           sendMessage={sendOtherMessage}
         />
-        {/* {videCallModel && (
-          <VideCall open={videCallModel} setOpen={setVideCallModel} />
-        )} */}
+        {videCallModel && (
+          <CallReceiveModel
+            open={videCallModel}
+            setOpen={setVideCallModel}
+            onAnswer={answerCall}
+          />
+        )}
       </ImageBackground>
     </Layout>
   );

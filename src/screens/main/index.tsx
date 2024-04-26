@@ -21,6 +21,13 @@ import { RootStackParamList } from 'utils/types';
 import Calls from './tabs/Calls';
 import Chats from './tabs/Chats';
 import Updates from './tabs/Updates';
+import {
+  Menu,
+  MenuProvider,
+  MenuOptions,
+  MenuOption,
+  MenuTrigger,
+} from 'react-native-popup-menu';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Listing'>;
 
@@ -61,7 +68,50 @@ const Listing = ({ navigation }: Props) => {
         <View className="flex flex-row gap-x-4">
           <Feather name="camera" size={22} color="#fff" />
           <Ionicons name="search-sharp" size={22} color="#fff" />
-          <Feather name="more-vertical" size={22} color="#fff" />
+          <Menu>
+            <MenuTrigger>
+              <Feather name="more-vertical" size={22} color="#fff" />
+            </MenuTrigger>
+            <MenuOptions
+              customStyles={{
+                optionsWrapper: {
+                  backgroundColor: '#1f2c34',
+                  paddingVertical: 8,
+                },
+                optionsContainer: {
+                  marginTop: 22,
+                  borderRadius: 10,
+                  maxWidth: '85%',
+                },
+              }}>
+              <MenuOption
+                customStyles={{
+                  optionText: {
+                    paddingHorizontal: 8,
+                    paddingVertical: 4,
+                    color: 'white',
+                  },
+                }}
+                onSelect={() => navigation.navigate('UserList')}
+                text="Switch User"
+              />
+              <MenuOption
+                customStyles={{
+                  optionText: {
+                    paddingHorizontal: 8,
+                    paddingVertical: 4,
+                    color: 'white',
+                  },
+                }}
+                onSelect={async () => {
+                  await AsyncStorage.setItem('token', '');
+                  await AsyncStorage.setItem('userDetails', '');
+                  navigation.replace('Login');
+                }}
+                text="Log Out"
+              />
+            </MenuOptions>
+          </Menu>
         </View>
       </Header>
       <Tab.Navigator

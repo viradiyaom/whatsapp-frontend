@@ -12,10 +12,10 @@ import Toast from 'react-native-toast-message';
 import { RootStackParamList } from 'utils/types';
 
 const initialData = {
-  email: 'nature@gmail.com',
-  password: 'nature@123',
-  // email: 'rocky@gmail.com',
-  // password: 'Rocky@123',
+  // email: 'nature@gmail.com',
+  // password: 'nature@123',
+  email: 'rocky@gmail.com',
+  password: 'Rocky@123',
 };
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
@@ -29,10 +29,17 @@ const LoginScreen = ({ navigation }: Props) => {
         .login(loginParams)
         .then(async ({ data }) => {
           if (data.data) {
-            await AsyncStorage.setItem(
-              'userDetails',
-              JSON.stringify(data.data),
-            );
+            const userList = await AsyncStorage.getItem('userList');
+            if (!userList?.includes(data.data.data.id)) {
+              const list = JSON.parse(userList || '[]');
+
+              await AsyncStorage.setItem(
+                'userDetails',
+                JSON.stringify(data.data),
+              );
+              list.push(data.data);
+              await AsyncStorage.setItem('userList', JSON.stringify(list));
+            }
             await AsyncStorage.setItem('token', data.data.token);
             Toast.show({ type: 'success', text1: data.message });
             navigation.replace('Listing');
@@ -77,7 +84,7 @@ const LoginScreen = ({ navigation }: Props) => {
         <Text className="font-semibold text-center text-white"> LOGIN</Text>
       </Button>
       <View className="flex-1" />
-      <Text className="text-white max-w-[300px] text-center mb-2">
+      <Text className="text-white max-w-[300px] text-center mb-6">
         Read our <Text className="underline">Privacy Policy</Text>. Tap "Agree &
         Continue" to accept the
         <Text className="underline">Terms of Service</Text>

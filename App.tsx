@@ -9,6 +9,9 @@ import Listing from 'screens/main';
 import { RootStackParamList } from 'utils/types';
 import LoginScreen from './src/screens/auth/login';
 import SplashScreen from './src/screens/auth/splash';
+import VideCall from 'screens/call/VideCall';
+import { MenuProvider } from 'react-native-popup-menu';
+import UserList from 'screens/user';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -22,6 +25,13 @@ const Container = () => (
     <Stack.Screen
       name="Login"
       component={LoginScreen}
+      options={{
+        headerShown: false,
+      }}
+    />
+    <Stack.Screen
+      name="UserList"
+      component={UserList}
       options={{
         headerShown: false,
       }}
@@ -46,14 +56,24 @@ const Container = () => (
         headerStyle: { backgroundColor: '#1f2c34' },
       }}
     />
+    <Stack.Screen
+      name="VideoCall"
+      component={VideCall}
+      options={{
+        headerShown: false,
+        headerStyle: { backgroundColor: '#1f2c34' },
+      }}
+    />
   </Stack.Navigator>
 );
 const App = () => (
   <SocketProvider>
-    <NavigationContainer>
-      <Container />
-      <Toast position="bottom" visibilityTime={2000} />
-    </NavigationContainer>
+    <MenuProvider>
+      <NavigationContainer>
+        <Container />
+        <Toast position="bottom" visibilityTime={2000} />
+      </NavigationContainer>
+    </MenuProvider>
   </SocketProvider>
 );
 
